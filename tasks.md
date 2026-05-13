@@ -9,6 +9,7 @@
 ## Completed
 - [x] Initialize git repository (2025-05-14)
 - [x] Set up SSH remote for GitHub (2025-05-14)
+- [x] Rename repo to Beacon (2025-05-14)
 - [x] Add Edgar SEC data fetching service (2025-05-13)
 - [x] Create frontend with Vite and React (2025-05-13)
 - [x] Add CompanySearch component (2025-05-13)
