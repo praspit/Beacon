@@ -38,3 +38,10 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### Python ###
+.venv/
+
+### Node ###
+frontend/node_modules/
+frontend/dist/
