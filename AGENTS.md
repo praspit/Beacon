@@ -35,14 +35,23 @@ This document describes the AI agents and automated workflows configured for the
 ## Agent Workflows
 
 ### 1. Code Review
-Runs on: Every pull request / on-demand
+Runs on: Every commit (pre-commit) and on-demand
 
 **Skill:** `review` - Reviews code changes and identifies high-confidence, actionable bugs.
 
 **Process:**
-1. Identify changed files
-2. Analyze for correctness, security, performance
-3. Surface findings with severity labels
+1. Before every `git commit`, review all staged changes
+2. Check for correctness, security, performance issues
+3. Fix critical issues before allowing commit
+4. Surface non-critical findings as warnings
+5. Allow commit with notes if user approves
+
+**On-demand:** You can also invoke it anytime by asking me to review code
+
+**Technical Implementation:**
+- No automated pre-commit hook (git hooks are local-only)
+- Droid manually reviews `git diff --staged` before every commit
+- Critical issues are fixed before commit; non-critical are noted
 
 ### 2. Security Audit
 Runs on: On-demand
