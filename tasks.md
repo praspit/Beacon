@@ -51,6 +51,8 @@ A financial data platform for viewing US stock financial statements from SEC EDG
 
 **Fix:** Use environment variables for allowed origins, add production domain.
 
+**Status:** ✅ Fixed (2025-05-14) - `WebConfig` now reads from `app.cors.allowed-origins` config; `application.yml` has configurable comma-separated origins.
+
 ---
 
 ## P1 - High Priority
