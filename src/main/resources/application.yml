@@ -1,0 +1,5 @@
+spring:
+  application.name: personalportfolio
+
+edgar:
+  identity: your.email@example.com

@@ -24,6 +24,8 @@ A financial data platform for viewing US stock financial statements from SEC EDG
 
 **Fix:** Use `kotlinx.coroutines` with `Dispatchers.IO`, or spawn Python processes asynchronously.
 
+**Status:** ✅ Fixed (2025-05-14) - All service methods now use `suspend` with `withContext(Dispatchers.IO)`; controller methods updated to `suspend` as well.
+
 ### 2. Silent error handling hides failures
 **Location:** `src/main/kotlin/.../EdgarService.kt`
 
@@ -31,12 +33,16 @@ A financial data platform for viewing US stock financial statements from SEC EDG
 
 **Fix:** Return a structured error response or throw domain-specific exceptions.
 
+**Status:** ✅ Fixed (2025-05-14) - EdgarService now throws domain-specific exceptions; @RestControllerAdvice provides consistent JSON error responses with errorCode, message, timestamp.
+
 ### 3. Hardcoded SEC identity
 **Location:** `edgar_wrapper.py`, `EdgarService.kt`
 
 **Problem:** Uses placeholder email `your.email@example.com` in two places. SEC requires legitimate identification for API access.
 
 **Fix:** Extract to `application.yml` under `edgar.identity`, use real email.
+
+**Status:** ✅ Fixed (2025-05-14) - `application.yml` created with `edgar.identity` config; `EdgarService.kt` uses `@Value` injection; `edgar_wrapper.py` reads from `EDGAR_IDENTITY` env var.
 
 ### 4. CORS excludes production
 **Location:** `src/main/kotlin/.../config/WebConfig.kt`

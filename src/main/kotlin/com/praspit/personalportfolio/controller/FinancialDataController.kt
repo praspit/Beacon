@@ -12,32 +12,32 @@ class FinancialDataController(
 ) {
 
     @GetMapping("/search")
-    fun searchCompanies(@RequestParam q: String): Map<String, List<CompanySearchResult>> {
+    suspend fun searchCompanies(@RequestParam q: String): Map<String, List<CompanySearchResult>> {
         val results = edgarService.searchCompanies(q)
         return mapOf("results" to results)
     }
 
     @GetMapping("/financials/{ticker}")
-    fun getFinancials(@PathVariable ticker: String): Map<String, Any> {
+    suspend fun getFinancials(@PathVariable ticker: String): Map<String, Any> {
         return edgarService.getFinancials(ticker.uppercase())
     }
 
     @GetMapping("/financials/{ticker}/income-statement")
-    fun getIncomeStatement(@PathVariable ticker: String): Map<String, Any> {
+    suspend fun getIncomeStatement(@PathVariable ticker: String): Map<String, Any> {
         val financials = edgarService.getFinancials(ticker.uppercase())
         @Suppress("UNCHECKED_CAST")
         return mapOf("data" to (financials["incomeStatement"] ?: emptyList<Any>()))
     }
 
     @GetMapping("/financials/{ticker}/balance-sheet")
-    fun getBalanceSheet(@PathVariable ticker: String): Map<String, Any> {
+    suspend fun getBalanceSheet(@PathVariable ticker: String): Map<String, Any> {
         val financials = edgarService.getFinancials(ticker.uppercase())
         @Suppress("UNCHECKED_CAST")
         return mapOf("data" to (financials["balanceSheet"] ?: emptyList<Any>()))
     }
 
     @GetMapping("/financials/{ticker}/cash-flow")
-    fun getCashFlowStatement(@PathVariable ticker: String): Map<String, Any> {
+    suspend fun getCashFlowStatement(@PathVariable ticker: String): Map<String, Any> {
         val financials = edgarService.getFinancials(ticker.uppercase())
         @Suppress("UNCHECKED_CAST")
         return mapOf("data" to (financials["cashFlow"] ?: emptyList<Any>()))

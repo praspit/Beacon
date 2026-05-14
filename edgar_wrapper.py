@@ -15,7 +15,7 @@ _venv_site = str(Path(__file__).parent / ".venv/lib/python3.12/site-packages")
 sys.path.insert(0, _venv_site)
 
 import edgar
-edgar.set_identity('your.email@example.com')
+edgar.set_identity(os.environ.get('EDGAR_IDENTITY', 'your.email@example.com'))
 
 from edgar import Company
 
