@@ -4,10 +4,11 @@ import {
   Input,
   HStack,
   Text,
-  Spinner,
   List,
   ListItem,
-  useColorModeValue,
+  InputGroup,
+  useBreakpointValue,
+  Spinner,
 } from '@chakra-ui/react'
 
 interface Company {
@@ -26,9 +27,7 @@ export default function CompanySearch({ onSelectCompany }: Props) {
   const [loading, setLoading] = useState(false)
   const [showResults, setShowResults] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
-
-  const bgColor = useColorModeValue('white', 'gray.700')
-  const hoverBg = useColorModeValue('blue.50', 'gray.600')
+  const isMobile = useBreakpointValue({ base: true, md: false })
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -65,55 +64,97 @@ export default function CompanySearch({ onSelectCompany }: Props) {
   }, [query])
 
   return (
-    <Box ref={wrapperRef} position="relative" maxW="600px" mx="auto" w="100%">
-      <Input
-        placeholder="Search by company name or ticker (e.g., Apple, AAPL)"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        size="lg"
-        bg={bgColor}
-      />
+    <Box ref={wrapperRef} position="relative" maxW={isMobile ? "100%" : "600px"} mx="auto" w="100%" px={isMobile ? 4 : 0}>
+      <InputGroup size="lg">
+        <Input
+          placeholder="Search by ticker or company name..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          bg="#1e293b"
+          border="1px solid #334155"
+          borderRadius="8px"
+          color="white"
+          fontSize={isMobile ? "md" : "md"}
+          px={isMobile ? 4 : 4}
+          _placeholder={{ color: '#64748b' }}
+          _hover={{ borderColor: '#475569' }}
+          _focus={{ borderColor: '#3b82f6', boxShadow: '0 0 0 1px #3b82f6' }}
+          onFocus={() => query.length >= 2 && results.length > 0 && setShowResults(true)}
+        />
+      </InputGroup>
 
       {loading && (
-        <HStack justify="center" py={2}>
-          <Spinner size="sm" />
-          <Text fontSize="sm">Searching...</Text>
-        </HStack>
-      )}
-
-      {showResults && results.length > 0 && (
-        <List
+        <Box
           position="absolute"
           top="100%"
+          mt={2}
           left={0}
           right={0}
           zIndex={10}
-          bg={bgColor}
-          boxShadow="md"
-          borderRadius="md"
-          maxH="300px"
+          bg="#1e293b"
+          border="1px solid #334155"
+          borderRadius="8px"
+          p={4}
+          textAlign="center"
+        >
+          <Spinner size="sm" color="#3b82f6" />
+          <Text color="#64748b" fontSize="sm" mt={2}>Searching...</Text>
+        </Box>
+      )}
+
+      {!loading && showResults && results.length > 0 && (
+        <List
+          position="absolute"
+          top="100%"
+          mt={2}
+          left={0}
+          right={0}
+          zIndex={10}
+          bg="#1e293b"
+          border="1px solid #334155"
+          borderRadius="8px"
+          maxH="320px"
           overflowY="auto"
+          boxShadow="0 10px 40px rgba(0,0,0,0.5)"
         >
           {results.map((company) => (
             <ListItem
               key={company.ticker}
-              p={3}
+              p={isMobile ? 3 : 4}
               cursor="pointer"
-              _hover={{ bg: hoverBg }}
+              borderBottom="1px solid #334155"
+              _last={{ borderBottom: 'none' }}
+              _hover={{ bg: '#334155' }}
               onClick={() => {
                 onSelectCompany(company)
                 setQuery('')
                 setShowResults(false)
               }}
             >
-              <HStack justify="space-between">
-                <Text fontWeight="bold">{company.ticker}</Text>
-                <Text flex={1} ml={2} isTruncated>
+              <HStack justify="space-between" flexWrap={isMobile ? "wrap" : "nowrap"} gap={2}>
+                <Text
+                  fontWeight="bold"
+                  color="#3b82f6"
+                  fontFamily="mono"
+                  fontSize="sm"
+                  minW="70px"
+                >
+                  {company.ticker}
+                </Text>
+                <Text
+                  flex={1}
+                  color="white"
+                  ml={isMobile ? 0 : 4}
+                  isTruncated
+                  fontSize={isMobile ? "sm" : "md"}
+                >
                   {company.name}
                 </Text>
-                <Text fontSize="xs" color="gray.500">
-                  CIK: {company.cik}
-                </Text>
+                {!isMobile && (
+                  <Text fontSize="xs" color="#64748b" fontFamily="mono">
+                    CIK: {company.cik}
+                  </Text>
+                )}
               </HStack>
             </ListItem>
           ))}
@@ -121,8 +162,8 @@ export default function CompanySearch({ onSelectCompany }: Props) {
       )}
 
       {showResults && query.length >= 2 && results.length === 0 && !loading && (
-        <Box bg={bgColor} p={4} boxShadow="md" borderRadius="md" textAlign="center">
-          <Text color="gray.500">No companies found</Text>
+        <Box bg="#1e293b" p={4} mt={2} border="1px solid #334155" borderRadius="8px" textAlign="center">
+          <Text color="#64748b">No companies found</Text>
         </Box>
       )}
     </Box>

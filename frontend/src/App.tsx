@@ -1,4 +1,4 @@
-import { Box, Container, Heading, Text, VStack } from '@chakra-ui/react'
+import { Box, Container, Heading, Text, VStack, Divider, useBreakpointValue, Link } from '@chakra-ui/react'
 import { useSearchParams } from 'react-router-dom'
 import CompanySearch from './components/CompanySearch'
 import FinancialStatement from './components/FinancialStatement'
@@ -15,6 +15,7 @@ function App() {
   const [searchParams, setSearchParams] = useSearchParams()
   const ticker = searchParams.get('ticker')
   const tab = (searchParams.get('tab') as TabType) || 'income-statement'
+  const isMobile = useBreakpointValue({ base: true, md: false })
 
   const companyFromUrl: Company | null = ticker
     ? { ticker: ticker.toUpperCase(), name: '', cik: '' }
@@ -31,25 +32,43 @@ function App() {
   }
 
   return (
-    <Box minH="100vh" bg="gray.50" py={8}>
-      <Container maxW="container.xl">
-        <VStack spacing={8} align="stretch">
-          <Box textAlign="center" py={4}>
-            <Heading size="xl" color="blue.600" mb={2}>
-              Financial Data Platform
+    <Box minH="100vh" bg="#0f172a" color="white" display="flex" flexDirection="column" py={isMobile ? 4 : 10}>
+      <Container maxW="1400px" px={isMobile ? 2 : 6} flex="1">
+        {/* Header */}
+        <VStack spacing={isMobile ? 4 : 6} align="stretch">
+          <Box pb={isMobile ? 2 : 4}>
+            <Heading size={isMobile ? "lg" : "xl"} color="white" fontWeight="bold" mb={1}>
+              Beacon
             </Heading>
-            <Text color="gray.600">
-              US Stock Financial Statements from SEC EDGAR
+            <Text color="#94a3b8" fontSize={isMobile ? "xs" : "sm"}>
+              Real-time SEC EDGAR financial data
             </Text>
           </Box>
 
+          <Divider borderColor="#1e293b" />
+
+          {/* Search */}
           <CompanySearch onSelectCompany={handleSelectCompany} />
 
+          {/* Financial Statement */}
           {companyFromUrl && (
-            <FinancialStatement company={companyFromUrl} activeTab={tab} onTabChange={handleTabChange} />
+            <Box px={isMobile ? 0 : 0}>
+              <FinancialStatement company={companyFromUrl} activeTab={tab} onTabChange={handleTabChange} />
+            </Box>
           )}
         </VStack>
       </Container>
+
+      {/* Footer */}
+      <Box py={6} textAlign="center" borderTop="1px solid #1e293b" mt={8}>
+        <Text color="#64748b" fontSize="xs">
+          Data sourced from{' '}
+          <Link href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany" target="_blank" rel="noopener" color="#3b82f6" _hover={{ textDecoration: 'underline' }}>
+            SEC EDGAR
+          </Link>
+          {' '}- US Securities and Exchange Commission
+        </Text>
+      </Box>
     </Box>
   )
 }
