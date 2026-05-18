@@ -17,27 +17,43 @@ class FinancialDataController(
     }
 
     @GetMapping("/financials/{ticker}")
-    suspend fun getFinancials(@PathVariable ticker: String): Map<String, Any> {
-        return edgarService.getFinancials(ticker.uppercase())
+    suspend fun getFinancials(
+        @PathVariable ticker: String,
+        @RequestParam(defaultValue = "10") periods: Int,
+        @RequestParam(defaultValue = "annual") periodType: String
+    ): Map<String, Any> {
+        return edgarService.getFinancials(ticker.uppercase(), periods, periodType)
     }
 
     @GetMapping("/financials/{ticker}/income-statement")
-    suspend fun getIncomeStatement(@PathVariable ticker: String): Map<String, Any> {
-        val financials = edgarService.getFinancials(ticker.uppercase())
+    suspend fun getIncomeStatement(
+        @PathVariable ticker: String,
+        @RequestParam(defaultValue = "10") periods: Int,
+        @RequestParam(defaultValue = "annual") periodType: String
+    ): Map<String, Any> {
+        val financials = edgarService.getFinancials(ticker.uppercase(), periods, periodType)
         @Suppress("UNCHECKED_CAST")
         return mapOf("data" to (financials["incomeStatement"] ?: emptyList<Any>()))
     }
 
     @GetMapping("/financials/{ticker}/balance-sheet")
-    suspend fun getBalanceSheet(@PathVariable ticker: String): Map<String, Any> {
-        val financials = edgarService.getFinancials(ticker.uppercase())
+    suspend fun getBalanceSheet(
+        @PathVariable ticker: String,
+        @RequestParam(defaultValue = "10") periods: Int,
+        @RequestParam(defaultValue = "annual") periodType: String
+    ): Map<String, Any> {
+        val financials = edgarService.getFinancials(ticker.uppercase(), periods, periodType)
         @Suppress("UNCHECKED_CAST")
         return mapOf("data" to (financials["balanceSheet"] ?: emptyList<Any>()))
     }
 
     @GetMapping("/financials/{ticker}/cash-flow")
-    suspend fun getCashFlowStatement(@PathVariable ticker: String): Map<String, Any> {
-        val financials = edgarService.getFinancials(ticker.uppercase())
+    suspend fun getCashFlowStatement(
+        @PathVariable ticker: String,
+        @RequestParam(defaultValue = "10") periods: Int,
+        @RequestParam(defaultValue = "annual") periodType: String
+    ): Map<String, Any> {
+        val financials = edgarService.getFinancials(ticker.uppercase(), periods, periodType)
         @Suppress("UNCHECKED_CAST")
         return mapOf("data" to (financials["cashFlow"] ?: emptyList<Any>()))
     }

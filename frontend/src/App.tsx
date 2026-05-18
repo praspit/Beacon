@@ -10,11 +10,13 @@ interface Company {
 }
 
 type TabType = 'income-statement' | 'balance-sheet' | 'cash-flow'
+type PeriodType = 'annual' | 'quarterly' | 'ttm'
 
 function App() {
   const [searchParams, setSearchParams] = useSearchParams()
   const ticker = searchParams.get('ticker')
   const tab = (searchParams.get('tab') as TabType) || 'income-statement'
+  const periodType = (searchParams.get('period') as PeriodType) || 'annual'
   const isMobile = useBreakpointValue({ base: true, md: false })
 
   const companyFromUrl: Company | null = ticker
@@ -22,12 +24,18 @@ function App() {
     : null
 
   const handleSelectCompany = (company: Company) => {
-    setSearchParams({ ticker: company.ticker, tab: 'income-statement' })
+    setSearchParams({ ticker: company.ticker, tab: 'income-statement', period: 'annual' })
   }
 
   const handleTabChange = (newTab: TabType) => {
     if (ticker) {
-      setSearchParams({ ticker, tab: newTab })
+      setSearchParams({ ticker, tab: newTab, period: periodType })
+    }
+  }
+
+  const handlePeriodChange = (newPeriod: PeriodType) => {
+    if (ticker) {
+      setSearchParams({ ticker, tab, period: newPeriod })
     }
   }
 
@@ -37,12 +45,14 @@ function App() {
         {/* Header */}
         <VStack spacing={isMobile ? 4 : 6} align="stretch">
           <Box pb={isMobile ? 2 : 4}>
-            <Heading size={isMobile ? "lg" : "xl"} color="white" fontWeight="bold" mb={1}>
-              Beacon
-            </Heading>
-            <Text color="#94a3b8" fontSize={isMobile ? "xs" : "sm"}>
-              Real-time SEC EDGAR financial data
-            </Text>
+            <Box>
+              <Heading size={isMobile ? "lg" : "xl"} color="white" fontWeight="bold" mb={1}>
+                Beacon
+              </Heading>
+              <Text color="#94a3b8" fontSize={isMobile ? "xs" : "sm"}>
+                Real-time SEC EDGAR financial data
+              </Text>
+            </Box>
           </Box>
 
           <Divider borderColor="#1e293b" />
@@ -53,7 +63,13 @@ function App() {
           {/* Financial Statement */}
           {companyFromUrl && (
             <Box px={isMobile ? 0 : 0}>
-              <FinancialStatement company={companyFromUrl} activeTab={tab} onTabChange={handleTabChange} />
+              <FinancialStatement
+                company={companyFromUrl}
+                activeTab={tab}
+                onTabChange={handleTabChange}
+                periodType={periodType}
+                onPeriodChange={handlePeriodChange}
+              />
             </Box>
           )}
         </VStack>

@@ -31,13 +31,23 @@ def search_companies(query):
     except Exception as e:
         return {"error": str(e), "results": []}
 
-def get_financials(ticker, periods=10):
+def get_financials(ticker, periods=10, period_type='annual'):
     """Get all financial statements for a company."""
     try:
+        # Ensure identity is set
+        edgar.set_identity(os.environ.get('EDGAR_IDENTITY', 'your.email@example.com'))
+        
         company = Company(ticker)
-        income = company.income_statement(periods=periods)
-        balance = company.balance_sheet(periods=periods)
-        cash = company.cash_flow_statement(periods=periods)
+        
+        # TTM doesn't apply to Balance Sheet (point-in-time data)
+        if period_type == 'ttm':
+            income = company.income_statement(periods=periods, period='ttm')
+            balance = company.balance_sheet(periods=periods, period='annual')  # Fallback to annual
+            cash = company.cash_flow_statement(periods=periods, period='ttm')
+        else:
+            income = company.income_statement(periods=periods, period=period_type)
+            balance = company.balance_sheet(periods=periods, period=period_type)
+            cash = company.cash_flow_statement(periods=periods, period=period_type)
         
         def to_list(stmt):
             items = []
@@ -60,16 +70,17 @@ def get_financials(ticker, periods=10):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python edgar_wrapper.py <command> <args> [periods]")
+        print("Usage: python edgar_wrapper.py <command> <args> [periods] [period_type]")
     else:
         command = sys.argv[1]
         arg = sys.argv[2]
         periods = int(sys.argv[3]) if len(sys.argv) > 3 else 10
+        period_type = sys.argv[4] if len(sys.argv) > 4 else 'annual'
         
         if command == "search":
             result = search_companies(arg)
         elif command == "financials":
-            result = get_financials(arg, periods)
+            result = get_financials(arg, periods, period_type)
         else:
             result = {"error": f"Unknown command: {command}"}
         
