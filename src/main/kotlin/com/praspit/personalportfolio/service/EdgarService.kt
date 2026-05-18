@@ -54,11 +54,17 @@ class EdgarService(
                 val result = String(process.inputStream.readBytes())
                 val errorOutput = String(process.errorStream.readBytes())
 
+                val json: Map<String, Any> = objectMapper.readValue(result)
+
+                // Python returns {"error": ...} on exceptions even with exit code 0
+                if (json.containsKey("error")) {
+                    throw parseProcessError(json["error"].toString())
+                }
+
                 if (exitCode != 0) {
                     throw parseProcessError(errorOutput.ifEmpty { result })
                 }
 
-                val json: Map<String, Any> = objectMapper.readValue(result)
                 @Suppress("UNCHECKED_CAST")
                 val results = json["results"] as? List<Map<String, Any>> ?: emptyList()
                 results.map {
@@ -86,11 +92,19 @@ class EdgarService(
                 val result = String(process.inputStream.readBytes())
                 val errorOutput = String(process.errorStream.readBytes())
 
+                val json: Map<String, Any> = objectMapper.readValue(result)
+
+                // Python returns {"error": ...} on exceptions even with exit code 0
+                if (json.containsKey("error")) {
+                    throw parseProcessError(json["error"].toString())
+                }
+
                 if (exitCode != 0) {
                     throw parseProcessError(errorOutput.ifEmpty { result })
                 }
 
-                objectMapper.readValue(result)
+                @Suppress("UNCHECKED_CAST")
+                json
             } catch (e: EdgarException) {
                 throw e
             } catch (e: Exception) {
