@@ -82,11 +82,11 @@ class EdgarService(
         }
     }
 
-    suspend fun getFinancials(ticker: String): Map<String, Any> {
+    suspend fun getFinancials(ticker: String, periods: Int = 10): Map<String, Any> {
         return withContext(Dispatchers.IO) {
             try {
                 val process = Runtime.getRuntime().exec(
-                    arrayOf(venvPython, "$basePath/edgar_wrapper.py", "financials", ticker.uppercase())
+                    arrayOf(venvPython, "$basePath/edgar_wrapper.py", "financials", ticker.uppercase(), periods.toString())
                 )
                 val exitCode = process.waitFor()
                 val result = String(process.inputStream.readBytes())

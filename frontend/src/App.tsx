@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { Box, Container, Heading, Text, VStack } from '@chakra-ui/react'
+import { useSearchParams } from 'react-router-dom'
 import CompanySearch from './components/CompanySearch'
 import FinancialStatement from './components/FinancialStatement'
 
@@ -9,8 +9,26 @@ interface Company {
   cik: string
 }
 
+type TabType = 'income-statement' | 'balance-sheet' | 'cash-flow'
+
 function App() {
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const ticker = searchParams.get('ticker')
+  const tab = (searchParams.get('tab') as TabType) || 'income-statement'
+
+  const companyFromUrl: Company | null = ticker
+    ? { ticker: ticker.toUpperCase(), name: '', cik: '' }
+    : null
+
+  const handleSelectCompany = (company: Company) => {
+    setSearchParams({ ticker: company.ticker, tab: 'income-statement' })
+  }
+
+  const handleTabChange = (newTab: TabType) => {
+    if (ticker) {
+      setSearchParams({ ticker, tab: newTab })
+    }
+  }
 
   return (
     <Box minH="100vh" bg="gray.50" py={8}>
@@ -25,10 +43,10 @@ function App() {
             </Text>
           </Box>
 
-          <CompanySearch onSelectCompany={setSelectedCompany} />
+          <CompanySearch onSelectCompany={handleSelectCompany} />
 
-          {selectedCompany && (
-            <FinancialStatement company={selectedCompany} />
+          {companyFromUrl && (
+            <FinancialStatement company={companyFromUrl} activeTab={tab} onTabChange={handleTabChange} />
           )}
         </VStack>
       </Container>

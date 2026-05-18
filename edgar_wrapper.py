@@ -31,13 +31,13 @@ def search_companies(query):
     except Exception as e:
         return {"error": str(e), "results": []}
 
-def get_financials(ticker):
+def get_financials(ticker, periods=10):
     """Get all financial statements for a company."""
     try:
         company = Company(ticker)
-        income = company.income_statement()
-        balance = company.balance_sheet()
-        cash = company.cash_flow_statement()
+        income = company.income_statement(periods=periods)
+        balance = company.balance_sheet(periods=periods)
+        cash = company.cash_flow_statement(periods=periods)
         
         def to_list(stmt):
             items = []
@@ -60,15 +60,16 @@ def get_financials(ticker):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python edgar_wrapper.py <command> <args>")
+        print("Usage: python edgar_wrapper.py <command> <args> [periods]")
     else:
         command = sys.argv[1]
         arg = sys.argv[2]
+        periods = int(sys.argv[3]) if len(sys.argv) > 3 else 10
         
         if command == "search":
             result = search_companies(arg)
         elif command == "financials":
-            result = get_financials(arg)
+            result = get_financials(arg, periods)
         else:
             result = {"error": f"Unknown command: {command}"}
         

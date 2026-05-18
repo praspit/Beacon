@@ -7,14 +7,36 @@ interface Company {
   cik: string
 }
 
+type TabType = 'income-statement' | 'balance-sheet' | 'cash-flow'
+
 interface Props {
   company: Company
+  activeTab?: TabType
+  onTabChange?: (tab: TabType) => void
 }
 
-export default function FinancialStatement({ company }: Props) {
+const TAB_INDEX_MAP: Record<TabType, number> = {
+  'income-statement': 0,
+  'balance-sheet': 1,
+  'cash-flow': 2
+}
+
+const TAB_NAME_MAP: Record<number, TabType> = {
+  0: 'income-statement',
+  1: 'balance-sheet',
+  2: 'cash-flow'
+}
+
+export default function FinancialStatement({ company, activeTab = 'income-statement', onTabChange }: Props) {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const handleTabChange = (index: number) => {
+    if (onTabChange) {
+      onTabChange(TAB_NAME_MAP[index])
+    }
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -58,28 +80,50 @@ export default function FinancialStatement({ company }: Props) {
     if (!rows || rows.length === 0) {
       return <Text>No data available</Text>
     }
+
+    // Find a row that has actual data (has year columns with values)
+    let sampleRow = rows.find((row: any) => {
+      const keys = Object.keys(row).filter(k => k !== 'label')
+      return keys.some(k => row[k] !== null && row[k] !== undefined && row[k] !== '')
+    })
+    if (!sampleRow) sampleRow = rows[1] || rows[0]
+
+    const yearColumns = Object.keys(sampleRow)
+      .filter(k => k !== 'label')
+      .sort()
+      .reverse()
+
     return (
-      <Table variant="simple" size="sm">
-        <Thead>
-          <Tr>
-            <Th>Item</Th>
-            <Th isNumeric>Value</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {rows.slice(0, maxRows).map((row: any, idx: number) => {
-            const label = row.label || 'N/A'
-            const valueKeys = Object.keys(row).filter(k => k !== 'label')
-            const value = valueKeys.length > 0 ? row[valueKeys[0]] : 'N/A'
-            return (
-              <Tr key={idx}>
-                <Td fontWeight="medium">{label}</Td>
-                <Td isNumeric>{typeof value === 'number' ? value.toLocaleString() : String(value)}</Td>
-              </Tr>
-            )
-          })}
-        </Tbody>
-      </Table>
+      <Box overflowX="auto">
+        <Table variant="simple" size="sm">
+          <Thead>
+            <Tr>
+              <Th>Item</Th>
+              {yearColumns.map(year => (
+                <Th key={year} isNumeric>{year}</Th>
+              ))}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {rows.slice(0, maxRows).map((row: any, idx: number) => {
+              const label = row.label || 'N/A'
+              return (
+                <Tr key={idx}>
+                  <Td fontWeight="medium">{label}</Td>
+                  {yearColumns.map(year => {
+                    const value = row[year]
+                    return (
+                      <Td key={year} isNumeric>
+                        {typeof value === 'number' ? value.toLocaleString() : value ? String(value) : '-'}
+                      </Td>
+                    )
+                  })}
+                </Tr>
+              )
+            })}
+          </Tbody>
+        </Table>
+      </Box>
     )
   }
 
@@ -95,7 +139,7 @@ export default function FinancialStatement({ company }: Props) {
         </Badge>
       </HStack>
 
-      <Tabs variant="enclosed" colorScheme="blue">
+      <Tabs index={TAB_INDEX_MAP[activeTab]} onChange={handleTabChange} variant="enclosed" colorScheme="blue">
         <TabList>
           <Tab>Income Statement</Tab>
           <Tab>Balance Sheet</Tab>
