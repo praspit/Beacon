@@ -140,23 +140,116 @@ A financial data platform for viewing US stock financial statements from SEC EDG
 
 ---
 
+## P2 - UI/UX Redesign (fiscal.ai-style)
+
+### 16. Professional color scheme
+**Location:** `frontend/src/App.tsx`, `FinancialStatement.tsx`, `CompanySearch.tsx`
+
+**Problem:** Current UI uses basic Chakra defaults. Needs professional financial platform aesthetic.
+
+**Tasks:**
+- [ ] Dark mode primary with clean whites for data readability
+- [ ] Consistent blue/indigo accent colors for interactive elements
+- [ ] Muted grays for backgrounds, high contrast for data
+- [ ] Subtle shadows and borders for depth
+- [ ] Professional typography (Inter or similar)
+
+### 17. Header redesign
+**Location:** `frontend/src/App.tsx`
+
+**Tasks:**
+- [ ] Logo/brand name "Beacon" with clean icon
+- [ ] Minimal navigation - no clutter
+- [ ] Clean tagline "Financial Data Platform"
+- [ ] Subtle top border accent line
+
+### 18. Company search redesign
+**Location:** `frontend/src/components/CompanySearch.tsx`
+
+**Tasks:**
+- [ ] Larger search input with placeholder "Search by ticker or company name..."
+- [ ] Subtle border that highlights on focus
+- [ ] Dropdown results with company ticker prominent, name secondary
+- [ ] CIK shown in muted text
+- [ ] Keyboard navigation support (arrow keys)
+
+### 19. Financial data table redesign
+**Location:** `frontend/src/components/FinancialStatement.tsx`
+
+**Tasks:**
+- [ ] Horizontal scrolling for many columns
+- [ ] Sticky first column (item name) when scrolling horizontally
+- [ ] Alternating row colors for readability
+- [ ] Bold line items, regular for sub-items
+- [ ] Numbers right-aligned with consistent decimal places
+- [ ] Year headers clearly visible when scrolling
+- [ ] Subtle hover effect on rows
+- [ ] Collapse/expand groups if applicable
+- [ ] "No data" shown as "-" not "N/A"
+
+### 20. Tab redesign
+**Location:** `frontend/src/components/FinancialStatement.tsx`
+
+**Tasks:**
+- [ ] Horizontal tab bar with clear active state
+- [ ] Underline indicator for active tab
+- [ ] Clean labels: "Income Statement", "Balance Sheet", "Cash Flow"
+- [ ] Subtle tab dividers
+
+### 21. Company header redesign
+**Location:** `frontend/src/components/FinancialStatement.tsx`
+
+**Tasks:**
+- [ ] Company name prominently displayed
+- [ ] Ticker badge next to name
+- [ ] CIK in muted text
+- [ ] "SEC EDGAR" badge
+- [ ] Clean divider below header
+
+### 22. Responsive design
+**Location:** `frontend/src/App.tsx`, `FinancialStatement.tsx`, `CompanySearch.tsx`
+
+**Tasks:**
+- [ ] Mobile-friendly horizontal scroll for tables
+- [ ] Collapsible search on mobile
+- [ ] Proper padding adjustments for mobile
+
+### 23. Loading and empty states
+**Location:** `frontend/src/components/FinancialStatement.tsx`, `CompanySearch.tsx`
+
+**Tasks:**
+- [ ] Skeleton loaders for tables (not just spinner)
+- [ ] Better empty state messaging
+- [ ] Inline loading indicator in table area
+
+### 24. Overall page layout
+**Location:** `frontend/src/App.tsx`
+
+**Tasks:**
+- [ ] Clean max-width container (not full viewport)
+- [ ] Consistent vertical spacing
+- [ ] Subtle background pattern or gradient (optional)
+- [ ] Footer with "Data from SEC EDGAR" attribution
+
+---
+
 ## P3 - Low Priority
 
-### 16. No unit tests
+### 25. No unit tests
 **Location:** `src/test/kotlin/.../PersonalportfolioApplicationTests.kt`
 
 **Problem:** Test file exists but has no real test coverage.
 
 **Fix:** Add tests for EdgarService, FinancialDataController.
 
-### 17. No Dockerfile or docker-compose
+### 26. No Dockerfile or docker-compose
 **Location:** (nonexistent)
 
 **Problem:** Local development and deployment require manual setup of Java 17, Gradle, Python, etc.
 
 **Fix:** Add containerization for reproducible builds.
 
-### 18. No cache-busting headers
+### 27. No cache-busting headers
 **Location:** All API endpoints
 
 **Problem:** Responses don't include ETag or Last-Modified; clients can't conditionally fetch.
